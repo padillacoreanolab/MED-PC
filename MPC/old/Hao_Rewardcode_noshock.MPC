@@ -1,0 +1,249 @@
+\v3 stop tone with poke
+\v3.2 monitor port entries AND exits
+
+\CS1 is ENSURE (3,5 kHz tone)
+\CS2 is shock (20 kHz tone)
+\CS3 is same tone as shock without shock
+\CS4 is CS-neut (9 kHz tone)
+
+\INPUTS
+^port = 8
+
+\OUTPUTS
+^LED = 6
+^tone1 = 2       \White-red-black wire
+^tone2 = 3      \Blue wire
+^tone3 = 4      \Green wire
+^tone4 = 5      \Orange wire
+^pump = 9
+^sessionsignal = 1       \this could also be white noise if plugged into that port
+
+\FIVE CHANNELS THAT GO TO OPEN EPHYS:
+
+^cs1out = 17
+^cs2out = 7
+^cs3out = 15
+^peout = 18
+^shkRelay = 13
+
+\EXP SETTINGS
+
+^initCS1trials = 0
+^nTrials = 120
+
+\ARRAYS
+DIM P = 10000 \Port entry time stamp array
+DIM Q = 2500 \ENSURE delivery time stamp array (absolute)
+DIM R = 2500 \ENSURE delivery time stamp array (relative to last CS)
+DIM W = 2500 \ITI values used for CS
+DIM S = 2500 \CS presentation values (absolute - every time light turns on)
+DIM N = 10000 \Port exit time stamp array
+DIM K = 2500 \CS type
+DIM B = 2500 \shock intensity
+
+\        1    2    3    4    5    6    7    8    9    10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31   32   33   34   35   36   37   38   39   40   41   42   43   44   45   46   47   48   49   50   51   52   53   54   55   56   57   58   59   60   61   62   63   64   65   66   67   68   69   70   71   72   73   74   75   76   77   78   79   80   81   82   83   84   85   86   87   88   89   90   91   92   93   94   95   96   97   98   99   100  101  102  103  104  105  106  107  108  109  110  111  112  113  114  115  116  117  118  119  120  121  122  123  124  125  126  127  128  129  130  131  132  133  134  135  136  137  138  139  140  141  142  143  144  145  146  147  148  149  150  151  152  153  154  155  156  157  158  159  160
+LIST V = 90", 100", 90", 85", 90", 95", 90", 80", 90", 100", 90", 90", 90", 85", 90", 95", 90", 80", 90", 100", 90", 90", 90", 85", 90", 95", 90", 80", 90", 100", 90", 90", 90", 85", 90", 95", 90", 80", 90", 100", 90", 90", 90", 85", 90", 95", 90", 80", 90", 100", 90", 90", 90", 85", 90", 95", 90", 80", 90", 100", 90", 90", 90", 85", 90", 95", 90", 80", 90", 100", 90", 90", 90", 85", 90", 95", 90", 80", 90", 100", 90", 90", 90", 85", 90", 95", 90", 80", 90", 100", 90", 90", 90", 85", 90", 95", 90", 80", 90", 100", 90", 90", 90", 85", 90", 95", 90", 80", 90", 100", 90", 90", 90", 85", 90", 95", 90", 80", 90", 100", 90", 90", 90", 85", 90", 95", 90", 80", 90", 100", 90", 90", 90", 85", 90", 95", 90", 80", 90", 100", 90", 90", 90", 85", 90", 95", 90", 80", 90", 100", 90", 90", 90", 85", 90", 95", 90", 80", 90", 100", 90", 90", 90", 85", 90", 95", 90", 80", 90", 100", 90", 90", 90", 85", 90", 95", 90", 80", 90", 100", 90", 90", 90", 85", 90", 95", 90", 80", 90", 100", 90", 90", 90", 85", 90", 95", 90", 80", 90", 100", 90", 90", 90", 85", 90", 95", 90", 80", 90", 100", 90", 90", 90", 85", 90", 95", 90", 80", 90", 100", 90", 90", 90", 85", 90", 95", 90", 80", 90", 100", 90", 90", 90", 85", 90", 95", 90", 80", 90", 100", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90"  \, 100", 108", 117", 121", 133", 145", 165" \CS ITI values (tone + LED)
+LIST E = 50", 60" \, 70" \CS ITI values for first few trials
+
+\        1                          10                            20                            30                            40                            50                            60                            70                            80                            90                            100                           110                           120                           130                           140                           150                           160                           170                           180                           190                           200
+LIST M = 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1  \1 is CS1, 2 is CS2, 3 is CS3
+
+\1 = reward trial
+\2 = shock trial
+
+LIST L = 0 \3, 3, 4, 4 \0, 0, 0, 3, 3, 3, 3, 3, 3, 3  \, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4
+    \0 - normal - turn off cS+ 400 ms after port entry,
+    \1 - increases CS+ turn off delay by 5s,
+    \2 - omit reward with normal CS+ turn off delay,
+    \3 - give reward only when the animal pokes (normal turn off delay),
+    \4 - give reward only when the animal pokes (longer CS+ turn off delay)
+LIST X = 0.9" \, 1", 1.5", 1.5", 2.5"
+
+\0 - normal - turn off cS+ 400 ms after port entry,
+\1 - increases CS+ turn off delay by 5s,
+\2 - omit reward with normal CS+ turn off delay,
+\3 - give reward only when the animal pokes (normal turn off delay),
+\4 - give reward only when the animal pokes (longer CS+ turn off delay)
+
+LIST J = 0.7      \shock intensity
+
+\Counter and Flag array
+DIM C = 10
+\All counters are zero-indexed!! Meaning, if C(0) = 3, there were 4 port entries
+\C(0) counter for number of port entries
+\C(1) counter for CS presentation number
+\C(2) counter for ENSURE delivery : this is 1-indexed,  meaning number indicates number of ENSURE deliveries
+\C(3) flag to indicate if ENSURE is in port =0 if no port entry was made, =1 if port entry was made (i.e., no ENSURE)
+\C(4) counter for number of port exits
+\C(5) number of CS1
+\C(6) number of CS2
+\C(7) number of CS3
+\C(8) number of ENSURE deliveries
+\C(9) number of shock deliveries
+\C(10) number of CSneut
+
+\Z-pulses
+\Z1: start task after initial delay
+\Z2: start of CS
+\Z3: port entry
+\Z4: port exit
+\Z5: trigger CS1
+\Z6: trigger CS2
+\Z7: trigger CS3
+\Z8: turn off all CS triggers
+
+\Variables
+\A - Time since last CS
+\B - Shock intensity
+\C - Counter array
+\D - Current ITI value
+\E - CS ITI values for first few trials
+\F - Shock duration
+\G -
+\H -
+\I -
+\J - Shock intensity repo
+\K - CS type
+\L -
+\M - CS type repo
+\N - Port exit time stamp array
+\O -
+\P - Port entry time stamp array
+\Q - ENSURE delivery time stamp array (absolute)
+\R - ENSURE delivery time stamp array (relative to last CS)
+\S - CS presentation time stamp array
+\T - Session timer
+\U - Time since last CS presentation
+\V - List of CS ITI values (tone + LED)
+\W - ITI values used for CS one each trial
+\X -
+\Y - Beam break monitor variable
+\Z -
+
+DISKVARS = A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, V, W, X, Z
+DISKCOLUMNS = 1
+
+\**************************Detect port entry
+S.S.1,
+S1,
+    #start: SET F = 500, H = 0.7; off^LED; SET C(3) = 1; Z1 ---> S2     \Shock duration 500 ms, shock intensity 0.7
+S2,
+    #R^port: ADD Y; IF Y >= 2 [@BeamBreak, @NoBeamBreak]
+                 @BeamBreak: Z3; SET Y = 0 ---> S3
+                 @NoBeamBreak: ---> SX
+    0.02": SET Y = 0 ---> S2
+S3,
+    0.02": Z4 ---> S2
+    #R^port: ---> S3
+
+\**************************After port entry
+S.S.2,
+S1,
+    #Z3: SET P(C(0)) = T; on^peout; SHOW 6, LastPortEntry, P(C(0)); ADD C(0); SET P(C(0)) = -987.987; SET C(3) = 1; SHOW 7, TotalPortEntries, C(0) ---> S1
+
+\**************************After port exit
+S.S.3,
+S1,
+    #Z4: SET N(C(4)) = T; off^peout; SHOW 1, LastPortExit, N(C(4)); ADD C(4); SET N(C(4)) = -987.987; SHOW 2, TotalPortExits, C(4) ---> S1
+
+\**************************Turn off house light and tone after port entry
+S.S.4,
+S1,
+    #Z3: ---> S2
+S2,
+    0.4": IF K(C(1)-1) = 1 [@cs1, @ncs1]
+                    @cs1: Z8 ---> S1
+                    @ncs1: ---> S1 \****don't turn off anything for shock (CS2) or shock tone without shock (CS3)
+
+\**************************Calculate ITI for CS presentation
+S.S.5,
+S1,
+    #Z1: ---> S2
+S2,
+    240": off^LED ---> S3 \**************Initial delay
+S3,
+    5": ---> S4
+S4,
+    D#T: IF (C(1) < ^nTrials) [@continueSession, @abortSession]
+        @continueSession: SET K(C(1)) = M(C(1)); SET W(C(1)) = V(C(1)); SET D = W(C(1)); RANDD B(C(1)) = J; ADD C(1); SET W(C(1)) = -987.987; SET K(C(1)) = -987.987; SHOW 10, Current ITI, D; Z2 ---> S4
+        @abortSession: off^sessionSignal ---> stopabortflush
+
+\**************************Turn on CS stimulus
+S.S.6,
+S1,
+    #Z2: on^LED; SHOW 3, CSNumber, C(1); SET S(C(1) - 1) = T; SET S(C(1)) = -987.987; SHOW 4, CSpresentationTime, S(C(1) - 1);
+               IF K(C(1)-1) = 1 [@cs1, @ncs1]
+                    @cs1: on^cs1out; ADD C(5); SHOW 8, nCS1, C(5); Z5 ---> S2
+                    @ncs1: IF K(C(1)-1) = 2 [@cs2, @ncs2]
+                        @cs2: on^cs2out; ADD C(6); SHOW 13, nCS2_shock, C(6); Z6 ---> S3
+                    @ncs2: IF K(C(1)-1) = 3 [@cs3, @ncs3]
+                        @cs3: on^cs2out; ADD C(7); SHOW 18, nCS2_noshock, C(7); Z6 ---> S4
+                    @ncs3: IF K(C(1)-1) = 4 [@cs4, @ncs4]
+                        @cs4: on^cs3out; ADD C(10); SHOW 19, nCS4_neut, C(10); Z7 ---> S4
+                        @ncs4: on^cs1out; ADD C(5); SHOW 8, nCS1, C(5); Z5 ---> S2
+
+
+S2,
+    10": Z8 ---> S1
+S3,
+    20": Z8 ---> S1
+S4,
+    20": Z8 ---> S1
+
+
+\**************************Deliver US stimulus
+S.S.7,
+S1,
+    #Z2:  IF C(3) = 1 [@portEntered, @portNotEntered]
+                 @portEntered: SET C(3) = 0 ---> S2      \sucrose
+                 @portNotEntered: ---> S1
+
+S2,
+    4": on^pump; SET Q(C(2)) = T; SET R(C(2)) = (T - U)*100; SHOW 12, USLatency, R(C(2)); ADD C(2);  SET Q(C(2)) = -987.987; SET R(C(2) + 1) = -987.987; ADD C(8); SHOW 11, NumENSUREDeliveries, C(8)  ---> S3         \increment ENSURE delivery counter
+S3,
+    0.5": off^pump ---> S1    \reset "port entered" flag
+
+
+
+S.S.8,   \CS1            \***** CS tones
+S1,
+    #Z5: on^tone2; on^tone3; ---> S1                                \*********************CS1 (Ensure) is 3.5 kHz! (tone 2+3 = output 10+11 = Blue+green wire)
+
+S.S.9,   \CS2 + CS3 (same CS)
+S1,
+    #Z6: on^tone1; on^tone2; on^tone3; on^tone4; ---> S1            \*********************CS2 (Shock)  is 20 kHz! (tone 1+2+3+4 = output 9+10+11+12 = White+Blue+green+orange wire)
+
+S.S.10,   \CS4
+S1,
+    #Z7: on^tone1; on^tone2; on^tone4; ---> S1                      \*********************CS4 (neut) is 9 kHz. (tone 1+2+4 = output 9+10+12 = White+green+orange wire)
+
+S.S.11,
+S1,
+    #Z8: off^LED; off^tone1; off^tone2; off^tone3; off^tone4; off^cs1out; off^cs2out; off^cs3out ---> S1
+
+
+S.S.12,       \Session timer
+S1,
+    #start: SET T = 0 ---> S2
+S2,
+    0.01": SET T = T + 0.01 ---> S2
+
+
+S.S.13,               \Stop session after however many minutes
+S1,
+    #start: on^sessionsignal ---> S2
+S2,
+    400': off^sessionsignal ---> stopabortflush \when time is up, store data and turn off everything.
+
+
+S.S.14,        \On screen clock
+S1,
+    #start: ---> S2
+S2,
+    1": SHOW 5, Clock, T; SET A = (T - U); SHOW 9, TimeFromLastCS, A ---> SX
+
+\Keep time since the start of CS presentation
+S.S.15,
+S1,
+    #Z2: SET U = T ---> S1
+

@@ -1,0 +1,204 @@
+\v3 stop tone with poke
+\v3.2 monitor port entries AND exits
+
+\INPUTS
+^port = 8
+
+\OUTPUTS
+^OtherNoise = 1
+^WhiteNoise = 2
+^pump = 9
+
+^overheadlight = 12
+^houselight = 16
+
+^laser=13
+^csout = 5
+^peout = 14
+^cs1out = 5
+^cs2out = 7
+^cs3out = 15
+
+\EXP SETTINGS
+^ncsNoShock = 0
+^initCS1trials = 3
+
+\ARRAYS
+DIM P = 20000 \Port entry time stamp array
+DIM Q = 2500 \US delivery time stamp array (absolute)
+DIM R = 2500 \US time stamp array (relative to last CS)
+DIM W = 2500 \ITI values used for CS
+DIM S = 2500 \CS presentation values (absolute - every time light turns on)
+DIM N = 20000 \Port exit time stamp array
+DIM K = 2500 \CS type
+DIM B = 2500 \shock intensity
+
+LIST V = 80", 90", 80", 75", 100", 95", 90", 80", 90", 100", 90", 120", 90", 85", 90", 95", 120", 80", 95", 80", 90", 80", 75", 100", 95", 90", 80", 90", 100", 90", 120", 90", 85", 90", 95", 90", 80", 90", 100", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90"  \, 100", 108", 117", 121", 133", 145", 165" \CS ITI values (tone + houselight)
+LIST E = 120", 80", 95" \CS ITI values for first few trials
+LIST M = 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 \1 is CS1, 2 is CS2, 3 is CS3
+LIST J =0.7, 0.7, 0.7, 0.7 \0.9, 0.9, 0.9, 0.9 \0, 0.3, 0.6, 0.9
+
+\Counter and Flag array
+DIM C = 10
+\All counters are zero-indexed!! Meaning, if C(0) = 3, there were 4 port entries
+\C(0) counter for number of port entries
+\C(1) counter for CS presentation number
+\C(2) counter for US delivery : this is 1-indexed,  meaning number indicates number of sucrose deliveries
+\C(3) flag to indicate if sucrose is in port =0 if no port entry was made, =1 if port entry was made (i.e., no sucrose)
+\C(4) counter for number of port exits
+\C(5) number of CS1
+\C(6) number of CS2
+\C(7) number of CS3
+\C(8) number of sucrose deliveries
+\C(9) number of shock deliveries
+
+\Z-pulses
+\Z1: start task after initial delay
+\Z2: start of CS
+\Z3: port entry
+\Z4: port exit
+\Z5: trigger CS1
+\Z6: trigger CS2
+\Z7: trigger CS3
+\Z8: turn off all CS triggers
+\Z12: INX trigger TTL
+
+\Variables
+\A - Time since last CS
+\B - Shock intensity
+\C - Counter array
+\D - Current ITI value
+\E - CS ITI values for first few trials
+\F - Shock duration
+\G -
+\H -
+\I -
+\J - Shock intensity repo
+\K - CS type
+\L -
+\M - CS type repo
+\N - Port exit time stamp array
+\O -
+\P - Port entry time stamp array
+\Q - Sucrose delivery time stamp array (absolute)
+\R - Sucrose delivery time stamp array (relative to last CS)
+\S - CS presentation time stamp array
+\T - Session timer
+\U - Time since last CS presentation
+\V - List of CS ITI values (tone + houselight)
+\W - ITI values used for CS one each trial
+\X -
+\Y - Beam break monitor variable
+\Z -
+
+
+DISKVARS = A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z
+DISKCOLUMNS = 1
+
+
+\Detect port entry
+S.S.1,
+S1,
+    \ #start: is to wait for start signal from user
+    \ F is shock duration
+    \ C is counter array
+    \C(3) flag to indicate if sucrose is in port =0 if no port entry was made, =1 if port entry was made (i.e., no sucrose)
+    \ Z# goes to the Z# in other State sets, while continuing with the rest of the statement
+    \ i.e. go to Z1 and S2
+    #start: SET F = 2000; SET C(3) = 1; Z1 ---> S2
+S2,
+    \ #R: Waits on responses in specified output, aka port
+    \ ADD increments a variable, aka Y, by 1
+    \ SX: Null transition maintains current state
+    \ IF is conditional, where if it's true the first one will happen AKA BeamBreak
+    \ And if false, the second one happens
+    #R^port: ADD Y; IF Y >= 2 [@BeamBreak, @NoBeamBreak]
+                 @BeamBreak: Z3; SET Y = 0 ---> S3
+                 @NoBeamBreak: ---> SX
+    0.02": SET Y = 0 ---> S2
+S3,
+    0.02": Z4 ---> S2
+    \ Waiting for entry from port
+    #R^port: ---> S3
+
+\After port entry
+S.S.2,
+S1,
+    \ on turns on the thing after the ^ and comman AKA peout
+    \N - Port exit time stamp array
+    \O -
+    \P - Port entry time stamp array
+    \C(0) counter for number of port entries
+    \ SHOW displays information in the show area of the MPC window
+    #Z3: SET P(C(0)) = T; on^peout; SHOW 6, LastPortEntry, P(C(0)); ADD C(0); SET P(C(0)) = -987.987; SET C(3) = 1; SHOW 7, TotalPortEntries, C(0) ---> S1
+
+\After port exit
+S.S.3,
+S1,
+    #Z4: SET N(C(4)) = T; off^peout; SHOW 1, LastPortExit, N(C(4)); ADD C(4); SET N(C(4)) = -987.987; SHOW 2, TotalPortExits, C(4) ---> S1
+
+\Calculate ITI for CS presentation
+S.S.5,
+S1,
+    #Z1: ---> S2
+S2,
+    30":  ---> S3  \Initial delay
+S3,
+    30":  ---> S4
+S4,
+
+  D#T:  SET K(C(1)) = 1; SET D = V(C(1)); ADD C(1); SHOW 10, Current ITI, D; Z2 ---> S4
+
+
+
+
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ ORIGINAL CODE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+S.S.28,       \Session timer
+S1,
+    #start: SET T = 0 ---> S2
+S2,
+    0.01": SET T = T + 0.01; SHOW 2, Current Time, T ---> S2
+
+\After port entry
+S.S.29,
+S1,
+    \ on turns on the thing after the ^ and comman AKA peout
+    \N - Port exit time stamp array
+    \O -
+    \P - Port entry time stamp array
+    \C(0) counter for number of port entries
+    \ SHOW displays information in the show area of the MPC window
+    #Z3: SET P(C(0)) = T; on^peout; SHOW 6, LastPortEntry, P(C(0)); ADD C(0); SET P(C(0)) = -987.987; SET C(3) = 1; SHOW 7, TotalPortEntries, C(0) ---> S1
+
+\After port exit
+S.S.30,
+S1,
+    #Z4: SET N(C(4)) = T; off^peout; SHOW 1, LastPortExit, N(C(4)); ADD C(4); SET N(C(4)) = -987.987; SHOW 2, TotalPortExits, C(4) ---> S1
+
+
+
+
+\Detect port entry with Whitenoise
+S.S.31,
+    S1,
+        #R^port: ON ^OtherNoise; ON ^pump ; ADD C(0)---> S2
+    S2,
+        2": OFF ^OtherNoise; OFF ^pump; SHOW 1, Times Entered, C(0) ---> S1
+
+
+
+\ This is left in here to check if Trans is correctly connected
+S.S.32,
+\ In state 1, wait 1 second, turn on the House Light, then go to state 2
+S1,
+     5": ---> S2
+\    5": ON ^OtherNoise; OFF ^WhiteNoise ---> S2
+\    1": ON ^WhiteNoise ---> S2
+\ In state 2, wait 5 second, turn on the House Light, then go to state 1
+S2,
+     5": ---> S1
+\    5": OFF ^OtherNoise; ON ^WhiteNoise ---> S1
+\    5": OFF ^WhiteNoise ---> S1s correctly connected
+

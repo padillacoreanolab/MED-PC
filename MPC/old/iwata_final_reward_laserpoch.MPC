@@ -1,0 +1,133 @@
+\ Requirements for the code:
+\ Varying ITI
+\ Whitenoise running the whole time (Done)
+\ Tone duration is always 10 s (Done)
+\ Pump turns on after 5 s, (Done)
+\ but from trial 2 on the pump only turns on if a new port entry was detected in the last trial.
+\ So it is conditional to port entries having happened such that the mouse picked up the last reward.
+\ In addition, we want to store
+\ port entries times
+\ port exit times
+\ store tone times,
+\ store pump onset times
+\ display the number of port entries and
+\ display the number of exits and
+\ display the number of tones/rewards on the program as they happen.
+
+\Counter and Flag array
+DIM C = 10
+\All counters are zero-indexed!! Meaning, if C(0) = 3, there were 4 port entries
+\C(0) counter for number of port entries
+\C(1) number of tones played
+\C(2) number of sucrose deliveries
+\C(3) flag to indicate if ENSURE is in port =0 if no port entry was made, =1 if port entry was made (i.e., no ENSURE)
+
+
+\C(9) number of shock deliveries
+
+\Z-pulses
+\Z1: start task after initial delay
+\Z2: start of CS
+\Z3: port entry
+\Z4: port exit
+\Z5: trigger CS1
+\Z6: trigger CS2
+\Z7: trigger CS3
+\Z8: turn off all CS triggers
+\Z12: INX trigger TTL
+
+\Variables
+\A - Time since last CS
+\B - Shock intensity
+\C - Counter array
+\D - Current ITI value
+\E - CS ITI values for first few trials
+\F - Shock duration
+\G -
+\H -
+\I -
+\J - Shock intensity repo
+\K - CS type
+\L -
+\M - CS type repo
+\N - Port exit time stamp array
+\O -
+\P - Port entry time stamp array
+\Q - Sucrose delivery time stamp array (absolute)
+\R - Sucrose delivery time stamp array (relative to last CS)
+\S - CS presentation time stamp array
+\T - Session timer
+\U - Time since last CS presentation
+\V - List of CS ITI values (tone + houselight)
+\W - ITI values used for CS one each trial
+\X -
+\Y - Beam break monitor variable
+\Z -
+
+DISKVARS = A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z
+DISKCOLUMNS = 1
+
+LIST E = 120", 80", 95" \CS ITI values for first few trials
+
+\INPUTS
+^port = 8
+
+\OUTPUTS
+^WhiteNoise = 1
+^OtherNoise = 2
+^pump = 9
+
+\Turn on white noise machine
+S.S.1,
+S1,
+    0.01": ON ^WhiteNoise ---> SX
+
+\Session timer
+S.S.2,
+S1,
+    #start: SET T = 0 ---> S2
+S2,
+    0.01": SET T = T + 0.01; SHOW 1, Current Time, T ---> S2
+
+\Play tone
+S.S.3,
+S1,
+    #Z1: ADD C(1); SHOW 2, Tones Played, C(1); ON ^OtherNoise ---> S2
+S2,
+    10": OFF ^OtherNoise; #Z2 ---> SX
+
+\ Give Reward
+S.S.4,
+S1,
+    #Z3: ADD C(2); SHOW 3, Rewards Delivered, C(2) ---> S2
+S2,
+    5": ON ^pump ---> S3
+S3,
+    2.5": OFF ^pump; #Z4 ---> SX \ TODO: Find out how long the reward pump duration is
+
+\Detect port entry and change flag
+S.S.5,
+    S1,
+        #R^port: SET C(3) = 1; SHOW 4, Port Entered Flag, C(3) ---> SX
+
+\ First Round
+S.S.6,
+S1,
+    \ Time can be set to whatever time you want for the first round
+    \ Turns on the first reward tone and delivery
+    #start: ---> S2
+S2,
+    10": #Z1; #Z3 ---> S3
+S3,
+    10": #Z5 ---> SX
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ Working On \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+
+
+\ Second Round And Beyond
+
+
+
+
+

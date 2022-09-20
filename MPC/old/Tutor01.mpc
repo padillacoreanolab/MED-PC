@@ -1,0 +1,16 @@
+\Outputs
+^WhiteNoise = 1
+^OtherNoise = 2
+
+S.S.1,
+\ In state 1, wait 1 second, turn on the House Light, then go to state 2
+S1,
+\    1": ON ^OtherNoise ---> S2
+    1": ON ^WhiteNoise ---> S2
+\ In state 2, wait 5 second, turn on the House Light, then go to state 1
+S2,
+\    5": OFF ^OtherNoise ---> S1
+\    5": OFF ^WhiteNoise; SHOW 1, Month, CURRENTMONTH; SHOW 2, Day, CURRENTDATE, SHOW 3, Year, CURRENTYEAR; SHOW 4, Hours, CURRENTHOURS; SHOW 5, Minutes, CURRENTMINUTES; SHOW 6, Seconds, CURRENTSECONDS ---> S1
+    5": OFF ^WhiteNoise; SHOW 6, Seconds, CURRENTSECONDS ---> S1
+
+

@@ -1,0 +1,8 @@
+DIM C = 10
+
+S.S.1,
+S1,
+    #start: SHOW 1, Special C, C(1) ---> S2
+S2,
+    10": ADD C(1); SHOW 2, Post C-lone, C(1) ---> SX
+
