@@ -1,0 +1,370 @@
+-----------------------------------------------------------------------------------------------------------------------
+CD Version 5.15.00
+
+************************
+* Trans 5.1.0.15       *
+************************
+Changes:
+* Fixes fault thrown by MED-PC Change Variables dialog under Japanese version of Windows when Var_Alias or EQUATEd
+  variables are used.
+
+Errata:
+
+
+******************************************
+* MED-PC Hardware Configuration 5.1.0.15 *
+******************************************
+Changes:
+* None
+
+Errata:
+
+
+************************
+* MED-PC 5.1.0.15      *
+************************
+Changes:
+* None
+
+Errata:
+
+
+-----------------------------------------------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------------------------------------------------
+CD Version 5.14.00
+
+************************
+* Trans 5.1.0.14       *
+************************
+Changes:
+* None
+
+Errata:
+
+
+******************************************
+* MED-PC Hardware Configuration 5.1.0.14 *
+******************************************
+Changes:
+* Corrects problem when there are extra racks that are not defined in the installation file.
+
+Errata:
+
+
+************************
+* MED-PC 5.1.0.14      *
+************************
+Changes:
+* Fixed divide by zero exception thrown under some circumstances when loading M5 panel settings during initial load.
+
+Errata:
+
+
+-----------------------------------------------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------------------------------------------------
+CD Version 5.13.00
+
+************************
+* Trans 5.1.0.13       *
+************************
+Changes:
+* None
+
+Errata:
+
+
+******************************************
+* MED-PC Hardware Configuration 5.1.0.13 *
+******************************************
+Changes:
+* None
+
+Errata:
+* If there are two racks and the second rack is filled with only ANL-926 cards, then in order
+  for MED-PC to correctly talk to all of the cards a second rack must be added to the hardware
+  configuration and at least one card of type "OTHER" must be added to that rack.
+
+************************
+* MED-PC 5.1.0.13      *
+************************
+Changes:
+* WITHPI and RANDI have been updated for improved randomization.
+
+Errata:
+
+
+-----------------------------------------------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------------------------------------------------
+CD Version 5.08
+Changes:
+* Emulation Mode as a command line parameter has been fixed.
+* Timing for Emulation Mode when started by MED-PC and not a command line parameter has been fixed.
+
+
+************************
+* Trans 5.1.0.11       *
+************************
+Changes:
+* None
+
+Errata:
+
+
+******************************************
+* MED-PC Hardware Configuration 5.1.0.11 *
+******************************************
+Changes:
+* None
+
+Errata:
+
+
+************************
+* MED-PC 5.1.0.11      *
+************************
+Changes:
+* None
+
+Errata:
+
+
+-----------------------------------------------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------------------------------------------------
+CD Version 5.07
+
+************************
+* Trans 5.1.0.11       *
+************************
+Changes:
+* Trans now supports the comma as the decimal separator.
+
+Errata:
+
+
+******************************************
+* MED-PC Hardware Configuration 5.1.0.11 *
+******************************************
+Changes:
+* None
+
+Errata:
+
+
+************************
+* MED-PC 5.1.0.11      *
+************************
+Changes:
+* MED-PC now supports the comma as the decimal separator.
+
+Errata:
+
+
+-----------------------------------------------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------------------------------------------------
+CD Version 5.06
+
+************************
+* Trans 5.1.0.10       *
+************************
+Changes:
+* Fixed problem where Trans would not properly compile under the Japanese version of Windows.
+
+Errata:
+
+
+******************************************
+* MED-PC Hardware Configuration 5.1.0.10 *
+******************************************
+Changes:
+* None
+
+Errata:
+
+
+************************
+* MED-PC 5.1.0.10      *
+************************
+Changes:
+* None
+
+Errata:
+
+
+-----------------------------------------------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------------------------------------------------
+CD Version 5.05
+
+************************
+* Trans 5.1.0.9        *
+************************
+Changes:
+* MED-PC V now shuffles the array values using the modern version of the Fisher-Yates algorithm,
+  which produces a more uniform distribution of outcomes for RANND than the algorithm used in
+  earlier MED-PC versions.
+
+Errata:
+
+
+******************************************
+* MED-PC Hardware Configuration 5.1.0.9  *
+******************************************
+Changes:
+* None
+
+Errata:
+
+
+************************
+* MED-PC 5.1.0.9       *
+************************
+Changes:
+* MED-PC V now shuffles the array values using the modern version of the Fisher-Yates algorithm,
+  which produces a more uniform distribution of outcomes than the algorithm used in earlier MED-PC versions.
+
+Errata:
+
+
+-----------------------------------------------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------------------------------------------------
+CD Version 5.04
+
+************************
+* Trans 5.1.0.8        *
+************************
+Changes:
+* Added optional second parameter to #X so that a time range may be specified. See Trans help file.
+
+Errata:
+
+
+******************************************
+* MED-PC Hardware Configuration 5.1.0.8  *
+******************************************
+Changes:
+* Fixed lack of highlighting with listboxes in Vista/Win7
+
+Errata:
+
+
+************************
+* MED-PC 5.1.0.8       *
+************************
+Changes:
+* Fixed lack of highlighting with listboxes in Vista/Win7
+
+Errata:
+
+
+-----------------------------------------------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------------------------------------------------
+CD Version 5.03
+
+************************
+* Trans 5.1.0.7        *
+************************
+Changes:
+* Now displays an error message that the software is not compatible with High Contrast Windows settings
+* Fixed issue introduced in 5.1.0.5 where DLLs were deleted if the .mpc extension was not uppercase
+* Corrected a source of exceptions that were being thrown by Trans under certain circumstances when the program was closed.
+
+Errata:
+
+
+
+******************************************
+* MED-PC Hardware Configuration 5.1.0.7  *
+******************************************
+Changes:
+* Now displays an error message that the software is not compatible with High Contrast Windows settings
+
+Errata:
+
+
+************************
+* MED-PC 5.1.0.7       *
+************************
+Changes:
+* Now displays an error message that the software is not compatible with High Contrast Windows settings
+* Now easier to enter negative numbers in the the Change Variables dialog
+* Open dialog now works more like a spreadsheet - enter key moves to the next cell
+* Fixed issue where loading wizard would not always set the parameters properly
+
+Errata:
+* In Windows 7 the first procedure in the wizard is selected, but not highlighted
+
+-----------------------------------------------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------------------------------------------------
+CD Version 5.02
+
+************************
+* Trans 5.1.0.5        *
+************************
+Changes:
+* Trans now issues an error message if there is a transition to a State that is < 0 or > 32, EG ---> S33
+* Corrects issue in which using the toolbar make or build button added entries to the batch translation log when there was a compiler error.
+* Sections of Translationdata.xml corresponding to missing MPC files are deleted if CompiledforMPCVersion is less than the current version level.
+* DLLs (and .o and .pas, if present) files in \DLL are deleted if there is no corresponding entry in Translationdata.XML
+
+Errata:
+
+
+
+******************************************
+* MED-PC Hardware Configuration 5.1.0.5  *
+******************************************
+Changes:
+* None
+
+Errata:
+
+
+************************
+* MED-PC 5.1.0.5       *
+************************
+Changes:
+* Demo version now loads compiled programs regardless of translation results.
+
+Errata:
+
+-----------------------------------------------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------------------------------------------------
+CD Version 5.01
+
+************************
+* Trans 5.1.0.4        *
+************************
+Changes:
+* Initial Release
+
+Errata:
+
+
+
+******************************************
+* MED-PC Hardware Configuration 5.1.0.4  *
+******************************************
+Changes:
+* Initial Release
+
+Errata:
+
+
+************************
+* MED-PC 5.1.0.4       *
+************************
+Changes:
+* Initial Release
+
+Errata:
+
+-----------------------------------------------------------------------------------------------------------------------

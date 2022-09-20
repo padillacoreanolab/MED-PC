@@ -1,0 +1,217 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:simpleType name="tbox">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="1"/>
+      <xs:maxInclusive value="16"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="tracknumber">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="1"/>
+      <xs:maxInclusive value="4"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="tbitnumber">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="1"/>
+      <xs:maxInclusive value="16"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="tboxio">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="1"/>
+      <xs:maxInclusive value="80"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="tintbool">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="0"/>
+      <xs:maxInclusive value="1"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="tslot">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="0"/>
+      <xs:maxInclusive value="16"/>
+          </xs:restriction>
+        </xs:simpleType>
+      <xs:simpleType name="tslotcount">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="0"/>
+      <xs:maxInclusive value="17"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="tport">
+    <xs:restriction base="xs:integer">
+   <xs:pattern value="-1|78[0-9]|79[0-5]|1000|0"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="toffset">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="-1"/>
+      <xs:maxInclusive value="254"/>
+      <xs:pattern value="-.*|.*[02468]"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="Medpc_Configuration">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Configuration_Types" minOccurs="1" maxOccurs="1"/>
+      </xs:sequence>
+      <xs:attribute name="HardwareSchemaVersion" type="xs:decimal" default="1.0" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Configuration_Types">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Hardware" minOccurs="1" maxOccurs="1"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Hardware">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Overall" minOccurs="1" maxOccurs="1"/>
+        <xs:element ref="Racks" minOccurs="1" maxOccurs="1"/>
+        <xs:element ref="Boxes" minOccurs="1" maxOccurs="1"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Overall">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Resolution">
+          <xs:simpleType>
+            <xs:restriction base="xs:integer">
+              <xs:minInclusive value="1"/>
+              <xs:maxInclusive value="100"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="Rack_Count" type="tracknumber" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="InportMin" type="tport" minOccurs="1" maxOccurs="1"/>
+        <xs:element name="InportMax" type="tport" minOccurs="1" maxOccurs="1"/>
+        <xs:element name="NumBoxes" type="tbox" minOccurs="1" maxOccurs="1"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Racks">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Rack" minOccurs="1" maxOccurs="4"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Rack">
+    <xs:complexType mixed="true">
+      <xs:sequence minOccurs="0">
+        <xs:element name="RackNumber" type="tracknumber" minOccurs="1" maxOccurs="1"/>
+        <xs:element name="Slot_Count" type="tslotcount" minOccurs="1" maxOccurs="1"/>
+        <xs:element ref="TestPort" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="Cards" minOccurs="0" maxOccurs="1"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="TestPort">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Port" type="tport" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="Offset" type="toffset" minOccurs="0" maxOccurs="1"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Cards">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Card" minOccurs="1" maxOccurs="17"/>
+      </xs:sequence>
+    </xs:complexType>
+    <xs:unique name="testUniqueCard">
+      <xs:selector xpath="Card"/>
+      <xs:field xpath="SecondaryCard"/>
+      <xs:field xpath="OutPort"/>
+      <xs:field xpath="OutPortOffset"/>
+      <xs:field xpath="InputPort"/>
+      <xs:field xpath="InportOffset"/>
+            <xs:field xpath="ForceUnique"/>
+    </xs:unique>
+        <xs:unique name="testUniqueSlot">
+      <xs:selector xpath="Card"/>
+      <xs:field xpath="Slot"/>
+    </xs:unique>
+  </xs:element>
+  <xs:element name="Card">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Model" type="xs:string"/>
+        <xs:element name="Slot" type="tslot"/>
+        <xs:element name="SecondaryCard" type="tintbool" minOccurs="1" maxOccurs="1"/>
+        <xs:element name="InputPort" type="tport" minOccurs="1" maxOccurs="1"/>
+        <xs:element name="InportOffset" type="toffset" minOccurs="1" maxOccurs="1"/>
+        <xs:element name="OutPort" type="tport" minOccurs="1" maxOccurs="1"/>
+        <xs:element name="OutPortOffset" type="toffset" minOccurs="1" maxOccurs="1"/>
+        <xs:element name="UserCustomName" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="ForceUnique" type="xs:integer" minOccurs="1" maxOccurs="1"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Boxes">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Box" minOccurs="1" maxOccurs="16"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Box">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Boxnumber" type="tbox"/>
+        <xs:element ref="Inputs" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="Outputs" minOccurs="0" maxOccurs="1"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Inputs">
+    <xs:complexType>
+      <xs:sequence minOccurs="0">
+        <xs:element ref="Input" minOccurs="0" maxOccurs="80"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Input">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="BoxNumber" type="tbox"/>
+        <xs:element name="Number" type="tboxio"/>
+        <xs:element name="Rack" type="tracknumber"/>
+        <xs:element name="Port" type="tport"/>
+        <xs:element name="Offset" type="toffset"/>
+        <xs:element name="BitNumber" type="tbitnumber"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Outputs">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Output" maxOccurs="80"/>
+      </xs:sequence>
+    </xs:complexType>
+    <xs:unique name="testUnique">
+      <xs:selector xpath="Output"/>
+      <xs:field xpath="Number"/>
+    </xs:unique>
+  </xs:element>
+  <xs:element name="Output">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="BoxNumber" type="tbox"/>
+        <xs:element name="Number" type="tboxio"/>
+        <xs:element name="Rack" type="tracknumber"/>
+        <xs:element name="Port" type="tport"/>
+        <xs:element name="Offset" type="toffset"/>
+        <xs:element name="BitNumber" type="tbitnumber"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

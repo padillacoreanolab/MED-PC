@@ -1,3 +1,27 @@
+# Project related folders
+Backups/
+Data/
+DLL/
+FPC/
+Logfiles/
+Macro/
+Manuals/
+MPC/
+PAS/
+Settings
+Shared/
+
+# Project related files
+*.hed
+*.dll
+*.pas
+*.med
+*.chm
+*.o
+*.ppu
+*.xml
+*.exe
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

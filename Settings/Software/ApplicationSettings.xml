@@ -1,0 +1,10 @@
+<Medpc_Configuration>
+	<Configuration_Types>
+		<File_Settings>
+      <Path>C:\MED-PC\Data\</Path>
+      <NameFormat>C</NameFormat>
+      <PrintOutType>4</PrintOutType>
+      <BackupFrequency>10</BackupFrequency>
+    </File_Settings>
+	</Configuration_Types>
+</Medpc_Configuration>
