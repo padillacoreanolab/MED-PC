@@ -14,7 +14,7 @@ S2,
 \S1,
  \   #start: on^led ---> S2
 \S2,
-   \ 0": off^led ---> S3
+\    0": off^led ---> S3
 \S3,
-   \ 30": on^led ---> S2
+\   30": on^led ---> S2
 
