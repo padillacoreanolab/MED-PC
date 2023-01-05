@@ -36,11 +36,11 @@ DIM H = 250 \controlled_stimulus_minutes computer clock time (minutes on clock e
 
 DIM I = 250 \controlled_stimulus_hours computer clock time (hours every time yellow light/tone turns on)
 
-DIM B = 6000 \port_entry_seconds computer clock time (seconds on clock every time red light turns on)
+DIM B = 2500 \port_entry_seconds computer clock time (seconds on clock every time red light turns on)
 
-DIM F = 6000 \port_entry_minutes computer clock time (minutes on clock every time red light turns on)
+DIM F = 2500 \port_entry_minutes computer clock time (minutes on clock every time red light turns on)
 
-DIM J = 6000 \port_entry_hours computer clock time (hours every time red light turns on)
+DIM J = 2500 \port_entry_hours computer clock time (hours every time red light turns on)
 
 
 
@@ -91,7 +91,7 @@ DIM C = 6
 
 \A - Time since last CS
 
-\B -
+\B - 
 
 \C - Counter array
 
@@ -239,11 +239,11 @@ S1,
 
 \ Uncomment line of code below for competiton(30 minutes)
 
-   \ #Z2: IF T >= 1800 [@overtime, @undertime]
+     #Z2: IF T >= 1800 [@overtime, @undertime]
 
 \ Uncomment line of code below for training(60 minutes)
 
-    #Z2: IF T >= 3600 [@overtime, @undertime]
+   \ #Z2: IF T >= 3600 [@overtime, @undertime]
 
         @overtime: ---> SX
 
@@ -291,11 +291,11 @@ S3,
 
     \ Uncomment for C57s
 
-    0.5": off^pump ---> S1
+    \0.5": off^pump ---> S1
 
     \ Uncomment for CD1s
 
-    \1": off^pump ---> S1
+    1": off^pump ---> S1
 
 
 
@@ -341,11 +341,11 @@ S2,
 
     \\\ Uncomment for Reward Training
 
-    61': off^whitenoise---> stopabortflush \when time is up, store data and turn off everything.
+   \ 61': off^whitenoise---> stopabortflush \when time is up, store data and turn off everything.
 
     \\\ Uncomment for Reward Competition
 
-   \ 31': off^whitenoise; ---> stopabortflush \when time is up, store data and turn off everything.
+    31': off^whitenoise; ---> stopabortflush \when time is up, store data and turn off everything.
 
 
 

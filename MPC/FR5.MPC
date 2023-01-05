@@ -1,0 +1,210 @@
+\ Copyright (C) 2016 MED Associates, All rights reserved.
+
+\ FR5.mpc - Source Program for MED-PC Illustrations
+\
+\ When the program is started it will turn on the HouseLight and the light over
+\ the Left Lever.  The program will then wait for the Animal to respond on the
+\ Left Lever enough times to meet the Fixed Ratio Value.
+\
+\ When the Fixed Ratio Value has been met the program will dispense one Pellet.
+\
+\ When the pellet has been dispensed the program will then once again wait for
+\ the Animal to respond on the Left Lever enough times to meet the Fixed Ratio
+\ Value.
+\
+\ The program has no end criteria.
+\
+\
+\ SoftCR Data is Recorded in Array C, with Relative Mode, and a 10ms Resolution.
+\ Relative Mode means that each event is listed by the amount of time that has
+\ passed since the last event has happened.
+\
+\   The number before the decimal point is the Time Stamp:
+\      (Example: 150 = 150 * 0.01 = 1.50s)
+\
+\   The number after the decimal point indicates which event happened:
+\      .10 = Left Lever Response
+\      .20 = Reinforcement
+
+
+\ Constants Used in this Program
+\ Compare the configurations below with the wiring chart supplied
+\ with all system orders.  Edit Input and Output #'s if different
+\ for your system or contact MED Associates for assistance.
+
+\ Inputs
+^LeftLever  = 1
+^RightLever = 2
+
+\ Outputs
+^LeftLever  = 1
+^RightLever = 2
+^Pellet     = 3
+^Dipper     = 3  \ If both Pellet and Dipper are ordered
+                 \ It will be necessary to change one of these
+^LeftLight  = 4
+^RightLight = 5
+^HouseLight = 7
+^Pump       = 8
+
+
+\ A() = Control Variables with Assigned Aliases as Defined
+Var_Alias Fixed Ratio Value               = A(0)  \ Default = 5
+Var_Alias SoftCR Data Array (1=Yes  0=No) = A(1)  \ Default = 1-Yes
+
+EQUATE FRVal  = A(0)
+EQUATE SoftCR = A(1)
+
+
+\ List Data Variables Here
+\  C() = IRT Array and Event Pen Code for Soft Cum. Recorder
+\
+\  F = Free Pellet Counter
+\  L = Left Lever Response Counter
+\  R = Reinforcement Counter
+
+
+\ List Working Variables Here
+\  I = Subscript for the IRT Array C
+\  T = Elapsed Time in 0.01 sec Increments for SoftCR Data
+
+
+\ Define Array sizes here.  The maximum total space available
+\ for all arrays in a single procedure is 1,000,000 elements.
+\ The code value -987.987 can be used to seal or terminate
+\ an array at the last valid element.
+DIM          A = 1
+^CArraySize = 10000  \ Change this Named Constant also when modifying the C Array Size
+Sealed_Array C = 10000  \ Dimension Array C for 10001 data points.
+                        \ Under MED-PC Version V, this array may be enlarged
+                        \ up to 1 million elements, however, 10000 was felt
+                        \ to be adequate for this application.
+                        \
+                        \ The Sealed_Array declaration will cause the array to
+                        \ be automatically truncated after the last non-zero
+                        \ value so that only those elements used during the
+                        \ running of the procedure are saved.
+
+
+\ Z-Pulses Used in this Program
+\  Z1 = Signal for Pellet Timer
+
+
+\ K-Pulses Used in this Program
+\  K1 = Signal for Free Pellet
+
+
+DISKVARS   = A, C, F, L, R
+DISKFORMAT = 8.3
+
+
+\***************************************************
+\                   FR5 SCHEDULE
+\  S1 - Set Default Values
+\       Fixed Ratio Value          (5)
+\       SoftCR Data Array          (1-Yes)
+\***************************************************
+S.S.1,
+S1,
+  0.01": SET FRVal = 5, SoftCR = 1 ---> S2
+
+S2,     \ First Statement: Wait for START signal, turn HouseLight and
+        \ associated stimulus ON.
+        \
+        \ Second Statement: Update screen display with default values
+        \ for Control Variables.  This will show any changes made via
+        \ the "Sessions | Change Variables..." Window prior to START.
+  #START: ON ^HouseLight, ^LeftLight ---> S3
+  1": SHOW 1,FR Value,FRVal, 2,SoftCR Code,SoftCR ---> SX
+
+S3,
+  FRVal#R^LeftLever: ADD R; Z1 ---> SX
+
+
+\***************************************************
+\            LEFT LEVER RESPONSE COUNTER
+\***************************************************
+S.S.2,
+S1,
+  #START: ---> S2
+
+S2,
+  #R^LeftLever: ADD L ---> SX
+
+
+\***************************************************
+\               PELLET CONTROL TIMER
+\ (Includes K1-pulse for Delivering a Free Pellet)
+\***************************************************
+S.S.3,
+S1,
+  #K1: ON ^Pellet; ADD F ---> S2
+  #Z1: ON ^Pellet        ---> S2
+
+S2,
+  0.05": OFF ^Pellet ---> S1
+
+
+\***************************************************
+\                  UPDATE DISPLAY
+\***************************************************
+S.S.4,
+S1,
+  #START: SHOW 1,FR Val,FRVal,     2,Left Responses,L;
+          SHOW 3,Reinforcements,R, 4,Free Pellets,F ---> S2
+
+S2,
+  1": SHOW 1,FR Val,FRVal,     2,Left Responses,L;
+      SHOW 3,Reinforcements,R, 4,Free Pellets,F ---> S2
+
+
+\***************************************************
+\ The following three State Sets are added to
+\ collect IRT and Reinforcement Time Codes that can
+\ be read by the SoftCR Cumulative Recorder
+\ program.  The IRT's can also be converted to real
+\ time values in any spread-sheet by stripping the
+\ code value to the right of the decimal point (use
+\ an int function) and dividing by 100.
+\***************************************************
+S.S.5,  \ Increment Time "T" with Resolution 0.01 seconds
+S1,
+  #START: IF SoftCR > 0 [] ---> S2
+
+S2,
+  0.01": ADD T ---> SX
+
+
+\***********************************************************
+\ ADD A STEP 0 ELEMENT TO ARRAY C FOR EACH CORRECT RESPONSE
+\***********************************************************
+S.S.6,  \ Set "Step 0" code for each Response.
+        \ This code is for Relative or Incremental
+        \ values.  If Absolute or Cumulative values are
+        \ desired, delete the code ", T = 0" in S2.
+S1,
+  #START: IF SoftCR > 0 [] ---> S2
+
+S2,     \ Record Correct Left Lever Responses
+  #R^LeftLever: IF I <= ^CArraySize [@True, @False]
+                   @True: SET C(I) = T + 0.10, T = 0; ADD I ---> SX
+                   @False: ---> S1
+
+
+\*******************************************************
+\ ADD A PIP 0 ELEMENT TO ARRAY C FOR EACH REINFORCEMENT
+\*******************************************************
+S.S.7,  \ Set "Pip 0" code for Reinforcement.
+        \ This code is for Relative or Incremental
+        \ values.  If Absolute or Cumulative values are
+        \ desired, delete the code ", T = 0" in S2.
+        \
+        \ NOTE: Free Pellets are not coded.
+S1,
+  #START: IF SoftCR > 0 [] ---> S2
+
+S2,     \ Record Reinforcements
+  #Z1: IF I <= ^CArraySize [@True, @False]
+          @True: SET C(I) = T + 0.20, T = 0; ADD I ---> SX
+          @False: ---> S1
+

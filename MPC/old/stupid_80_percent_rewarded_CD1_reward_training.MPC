@@ -46,9 +46,10 @@ DIM J = 6000 \port_entry_hours computer clock time (hours every time red light t
 
 \Original List of ITIs
 
-LIST V = 80", 90", 80", 75", 100", 95", 90", 80", 90", 100", 90", 120", 90", 85", 90", 95", 120", 80", 95", 80", 90", 80", 75", 100", 95", 90", 80", 90", 100", 90", 120", 90", 85", 90", 95", 90", 80", 90", 100", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90" \, 100", 108", 117", 121", 133", 145", 165" \CS ITI values (tone + houselight)
+LIST V = 20", 20", 20", 20", 20", 20", 90", 80", 90", 100", 90", 120", 90", 85", 90", 95", 120", 80", 95", 80", 90", 80", 75", 100", 95", 90", 80", 90", 100", 90", 120", 90", 85", 90", 95", 90", 80", 90", 100", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90" \, 100", 108", 117", 121", 133", 145", 165" \CS ITI values (tone + houselight)
 
-
+\ Boolean of whether reward is given
+LIST O = 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1
 
 \Counter and Flag array
 DIM C = 6
@@ -135,7 +136,7 @@ DIM C = 6
 
 \W - ITI values used for CS one each trial
 
-\X -
+\X - Current reward or not value (0 or 1)
 
 \Y - Beam break monitor variable
 
@@ -226,10 +227,8 @@ S2,
     60":  ---> S3
 
 S3,
-
-  D#T:  SET K(C(1)) = 1; SET D = V(C(1)); ADD C(1); SHOW 10, Current ITI, D; Z2 ---> S3
-
-
+\\\
+  D#T:  SET K(C(1)) = 1; SET D = V(C(1)); SET X = O(C(1)); ADD C(1); SHOW 10, Current ITI, D; Z2 ---> S3
 
 \ Turn on CS stimulus and recording time on the computer
 
@@ -281,9 +280,11 @@ S1,
 
 S2,
 
-    4": on^pump; SET Q(C(2)) = T; SET R(C(2)) = (T - U)*100; SHOW 12, USLatency, R(C(2)); ADD C(2); SET Q(C(2)) = -987.987; SET R(C(2) + 1) = -987.987; ADD C(6); SHOW 11, NumSucroseDeliveries, C(6)  ---> S3         \increment sucrose delivery counter
+    4":  IF X = 1 [@yesRewarded, @noRewarded]
 
+                 @yesRewarded: on^pump; SET Q(C(2)) = T; SET R(C(2)) = (T - U)*100; SHOW 12, USLatency, R(C(2)); ADD C(2); SET Q(C(2)) = -987.987; SET R(C(2) + 1) = -987.987; ADD C(6); SHOW 11, NumSucroseDeliveries, C(6)  ---> S3
 
+                 @noRewarded: ---> S1
 
 \ Reset "port entered" flag,
 
@@ -291,11 +292,11 @@ S3,
 
     \ Uncomment for C57s
 
-    0.5": off^pump ---> S1
+    \0.5": off^pump ---> S1
 
     \ Uncomment for CD1s
 
-    \1": off^pump ---> S1
+    1": off^pump ---> S1
 
 
 

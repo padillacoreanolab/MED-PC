@@ -3,14 +3,26 @@
 ^port = 8
 
 
+
 \OUTPUTS
-^whitenoise = 1
-^tone1 = 2
-^tone2 = 3
-^pump = 9
+
 ^fan = 16
-^toneled = 17
+
+^tone1 = 2
+
+^tone2 = 3
+
+^pump = 9
+
+^whitenoise = 1
+
+^csout = 5
+
+^peout = 15
+
 ^peled = 18
+
+^toneled = 17
 
 
 
@@ -18,29 +30,29 @@
 
 DIM P = 20000 \Port entry time stamp array
 
-DIM Q = 250 \US delivery time stamp array (absolute)
+DIM Q = 2500 \US delivery time stamp array (absolute)
 
-DIM R = 250 \US time stamp array (relative to last CS)
+DIM R = 2500 \US time stamp array (relative to last CS)
 
 DIM W = 2500 \ITI values used for CS
 
-DIM S = 2500 \CS presentation values (absolute - every time yellow light turns on)
+DIM S = 2500 \CS presentation values (absolute - every time light turns on)
 
 DIM N = 20000 \Port exit time stamp array
 
-DIM K = 250 \CS type
+DIM K = 2500 \CS type
 
-DIM G = 250 \controlled_stimulus_seconds computer clock time (seconds on clock every time yellow light/tone turns on)
+DIM G = 2500 \controlled_stimulus_seconds computer clock time (seconds on clock every time light turns on)
 
-DIM H = 250 \controlled_stimulus_minutes computer clock time (minutes on clock every time yellow light/tone turns on)
+DIM H = 2500 \controlled_stimulus_minutes computer clock time (minutes on clock every time light turns on)
 
-DIM I = 250 \controlled_stimulus_hours computer clock time (hours every time yellow light/tone turns on)
+DIM I = 2500 \controlled_stimulus_hours computer clock time (hours every time light turns on)
 
-DIM B = 6000 \port_entry_seconds computer clock time (seconds on clock every time red light turns on)
+DIM B = 2500 \port_entry_seconds computer clock time (seconds on clock every time light turns on)
 
-DIM F = 6000 \port_entry_minutes computer clock time (minutes on clock every time red light turns on)
+DIM F = 2500 \port_entry_minutes computer clock time (minutes on clock every time light turns on)
 
-DIM J = 6000 \port_entry_hours computer clock time (hours every time red light turns on)
+DIM J = 2500 \port_entry_hours computer clock time (hours every time light turns on)
 
 
 
@@ -51,21 +63,24 @@ LIST V = 80", 90", 80", 75", 100", 95", 90", 80", 90", 100", 90", 120", 90", 85"
 
 
 \Counter and Flag array
-DIM C = 6
 
-\are all 1-indexed i.e. 3 port entries means 3 port entries
+DIM C = 10
+
+\All counters are zero-indexed!! Meaning, if C(0) = 3, there were 4 port entries
+
+\i dont think the above is true
 
 \C(0) counter for number of port entries
 
 \C(1) counter for CS presentation number
 
-\C(2) counter for US delivery
+\C(2) counter for US delivery : this is 1-indexed,  meaning number indicates number of sucrose deliveries
 
 \C(3) flag to indicate if sucrose is in port =0 if no port entry was made, =1 if port entry was made (i.e., no sucrose)
 
 \C(4) counter for number of port exits
 
-\C(5) number of CS1 (tones)
+\C(5) number of CS1
 
 \C(6) number of sucrose deliveries
 
@@ -167,6 +182,8 @@ S1,
 
 
 
+
+
 \Make sure INPUT IS SET TO LEVEL MODE
 
 S2,
@@ -195,7 +212,7 @@ S.S.2,
 
 S1,
 
-    #Z3: SET B(C(0)) = CURRENTSECONDS; SET F(C(0)) = CURRENTMINUTES; SET J(C(0)) = CURRENTHOURS; SET P(C(0)) = T; SHOW 6, LastPortEntry, P(C(0)); ADD C(0); SET P(C(0)) = -987.987; SET C(3) = 1; SHOW 7, TotalPortEntries, C(0) ---> S1
+    #Z3: SET B(C(0)) = CURRENTSECONDS; SET F(C(0)) = CURRENTMINUTES; SET J(C(0)) = CURRENTHOURS; SET P(C(0)) = T; on^peout; SHOW 6, LastPortEntry, P(C(0)); ADD C(0); SET P(C(0)) = -987.987; SET C(3) = 1; SHOW 7, TotalPortEntries, C(0) ---> S1
 
 
 
@@ -205,7 +222,7 @@ S.S.3,
 
 S1,
 
-    #Z4: SET N(C(4)) = T; SHOW 1, LastPortExit, N(C(4)); ADD C(4); SET N(C(4)) = -987.987; SHOW 2, TotalPortExits, C(4) ---> S1
+    #Z4: SET N(C(4)) = T; off^peout; SHOW 1, LastPortExit, N(C(4)); ADD C(4); SET N(C(4)) = -987.987; SHOW 2, TotalPortExits, C(4) ---> S1
 
 
 
@@ -239,22 +256,22 @@ S1,
 
 \ Uncomment line of code below for competiton(30 minutes)
 
-   \ #Z2: IF T >= 1800 [@overtime, @undertime]
+    #Z2: IF T >= 1800 [@overtime, @undertime]
 
 \ Uncomment line of code below for training(60 minutes)
 
-    #Z2: IF T >= 3600 [@overtime, @undertime]
+\    #Z2: IF T >= 3600 [@overtime, @undertime]
 
         @overtime: ---> SX
 
-        @undertime: ---> S2
+        @undertime: on^csout ---> S2
 
 S2,
 
     0.0001": SHOW 3, CSNumber, C(1); SET S(C(1) - 1) = T; SET G(C(1) - 1) = CURRENTSECONDS; SET H(C(1) - 1) = CURRENTMINUTES; SET I(C(1) - 1) = CURRENTHOURS; SET S(C(1)) = -987.987; SHOW 4, CSpresentationSeconds, G(C(1) - 1);
 
                 IF K(C(1)-1) = 1 [@cs1, @ncs1]
-\ Todo: Add this or not
+
                     @cs1: off^toneled; ADD C(5); SHOW 8, nCS1, C(5); Z5 ---> S3
                     @ncs1: ---> SX
 
@@ -311,7 +328,7 @@ S.S.11,
 
 S1,
 
-    #Z6: off^tone1; off^tone2; on^toneled ---> S1
+    #Z6: off^tone1; off^tone2; SET C(10) = 0 ---> S1
 
 
 
@@ -341,11 +358,11 @@ S2,
 
     \\\ Uncomment for Reward Training
 
-    61': off^whitenoise---> stopabortflush \when time is up, store data and turn off everything.
+    \65': off^whitenoise---> stopabortflush \when time is up, store data and turn off everything.
 
     \\\ Uncomment for Reward Competition
 
-   \ 31': off^whitenoise; ---> stopabortflush \when time is up, store data and turn off everything.
+    31': off^whitenoise; ---> stopabortflush \when time is up, store data and turn off everything.
 
 
 

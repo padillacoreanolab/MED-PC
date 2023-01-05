@@ -46,9 +46,7 @@ DIM J = 6000 \port_entry_hours computer clock time (hours every time red light t
 
 \Original List of ITIs
 
-LIST V = 80", 90", 80", 75", 100", 95", 90", 80", 90", 100", 90", 120", 90", 85", 90", 95", 120", 80", 95", 80", 90", 80", 75", 100", 95", 90", 80", 90", 100", 90", 120", 90", 85", 90", 95", 90", 80", 90", 100", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90", 90" \, 100", 108", 117", 121", 133", 145", 165" \CS ITI values (tone + houselight)
-
-
+LIST V = 80", 90", 80", 75", 100", 95", 90", 80", 90", 100", 90", 120", 90", 85", 90", 95", 120", 80", 95", 80", 90", 80", 75", 100", 95", 90", 80", 90", 100", 90", 120", 90", 85", 90", 95", 90", 80", 90", 100", 90", 80", 90", 80", 75", 100", 95", 90", 80", 90", 100", 90", 120", 90", 85", 90", 95", 120", 80", 95", 80", 90", 80", 75", 100", 95", 90", 80", 90", 100", 90", 120", 90", 85", 90", 95", 90", 80", 90", 100", 90" \CS ITI values (tone + houselight)
 
 \Counter and Flag array
 DIM C = 6
@@ -241,9 +239,9 @@ S1,
 
    \ #Z2: IF T >= 1800 [@overtime, @undertime]
 
-\ Uncomment line of code below for training(60 minutes)
+\ Uncomment line of code below for training(120 minutes)
 
-    #Z2: IF T >= 3600 [@overtime, @undertime]
+    #Z2: IF T >= 7200 [@overtime, @undertime]
 
         @overtime: ---> SX
 
@@ -291,11 +289,11 @@ S3,
 
     \ Uncomment for C57s
 
-    0.5": off^pump ---> S1
+    \0.5": off^pump ---> S1
 
     \ Uncomment for CD1s
 
-    \1": off^pump ---> S1
+    1": off^pump ---> S1
 
 
 
